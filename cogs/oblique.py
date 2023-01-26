@@ -5,9 +5,9 @@ Description:
 
 Version: 5.5.0
 """
-import datetime
-
 import discord
+
+from datetime import datetime
 from discord.ext import commands, tasks
 from discord.ext.commands import Context
 from pytz import timezone
@@ -19,8 +19,10 @@ from obliquestrategies import get_strategy
 # Here we name the cog and create a new class for the cog.
 class Oblique(commands.Cog, name="oblique"):
     def __init__(self, bot):
-        print(f"initializing oblique")
         self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_ready(self):
         self.send_strategy.start()
 
     @commands.hybrid_command(
@@ -33,17 +35,14 @@ class Oblique(commands.Cog, name="oblique"):
         await context.send(embed=embed)
 
     #Tasks
-    @tasks.loop(seconds=60)
-    @checks.not_blacklisted()
+    @tasks.loop(minutes=1.0)
     async def send_strategy(self):
-        print("Start send_strategy()")
         channel = await self.bot.fetch_channel(self.bot.config['DISCORD_CHANNEL_ID'])
         self.bot.logger.info(f"Oblique Channel: {channel}")
         async for message in channel.history(limit=1):
             last_message_timestamp = message.created_at
             sixty_minutes_ago = datetime.now(timezone('UTC')) - timedelta(minutes=60)
-            self.bot.info(f"Last message in {channel} was at {last_message_timestamp} by {message.author}")
-            #print(sixty_minutes_ago)
+            self.bot.logger.info(f"Last message in {channel} was at {last_message_timestamp} by {message.author}")
             if last_message_timestamp < sixty_minutes_ago:
                 await channel.send(f'`{get_strategy()}`')
 
