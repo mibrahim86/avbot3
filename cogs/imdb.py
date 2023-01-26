@@ -6,11 +6,12 @@ Description:
 Version: 5.5.0
 """
 import imdb
+import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
 from helpers import checks
-
+from paginator import Paginator, Page, NavigationType
 
 # Here we name the cog and create a new class for the cog.
 class IMDB(commands.Cog, name="imdb"):
@@ -24,12 +25,24 @@ class IMDB(commands.Cog, name="imdb"):
         description="Search IMDB for a movie.",
     )
     @checks.not_blacklisted()
-    async def movie(self, context: Context):
+    async def movie(
+        self, 
+        context: Context,
+        movie_name: str
+    ):
         ia = imdb.Cinemagoer()
-        movies = ia.search_movie('matrix')
+        paginator = Paginator(self.bot)
+        pages = []
+
+        movies = ia.search_movie(movie_name)
         for m in movies:
             print(f"{m}")
+            print(f"https://imdb.com/title/tt{m.getID()}")
             print(f"{m.get_fullsizeURL()}")
+            em = discord.Embed(title=f"{m}", url=f"https://imdb.com/title/tt{m.getID()}", description="")
+            em.set_image(url=m.get_fullsizeURL())
+            pages.append(Page(embed=em))
+        await paginator.send(context.channel, pages, type=NavigationType.Buttons)
 
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):
