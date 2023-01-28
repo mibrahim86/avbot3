@@ -23,7 +23,11 @@ class Oblique(commands.Cog, name="oblique"):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.send_strategy.start()
+        if not self.send_strategy.is_running():
+            self.send_strategy.start()
+            self.bot.logger.info("Oblique started.")
+        else:
+            self.bot.logger.info("Oblique already running!") 
 
     @commands.hybrid_command(
         name="oblique",
@@ -35,7 +39,7 @@ class Oblique(commands.Cog, name="oblique"):
         await context.send(embed=embed)
 
     #Tasks
-    @tasks.loop(minutes=1.0)
+    @tasks.loop(minutes=20.0)
     async def send_strategy(self):
         channel = await self.bot.fetch_channel(self.bot.config['DISCORD_CHANNEL_ID'])
         self.bot.logger.info(f"Oblique Channel: {channel}")

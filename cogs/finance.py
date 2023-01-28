@@ -33,11 +33,11 @@ class Finance(commands.Cog, name="finance"):
         ticker: str,
     ):
         s = yfinance.Ticker(ticker)
-        print(json.dumps(s.info, indent=4))
+        print(s)
         if s is not None:
-            print(json.dumps(s.info, indent=4))
+            #print(json.dumps(s.info, indent=4))
             if s.info['quoteType'] == "EQUITY":
-                price = "${:,.2f}".format(s.info["currentPrice"])
+                price = "${:,.2f}".format(s.info["regularMarketPrice"])
                 marketcap = "${:,.0f}".format(s.info["marketCap"])
                 summary = s.info["longBusinessSummary"]
                 embed=discord.Embed(title=f"{stock}", url=f"https://cnbc.com/quotes/{stock}",description=f"{summary}")

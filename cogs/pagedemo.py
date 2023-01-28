@@ -5,7 +5,8 @@ Description:
 
 Version: 5.5.0
 """
-
+import discord
+from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
 from discord import Embed
@@ -42,6 +43,16 @@ class PageDemo(commands.Cog, name="pagedemo"):
 
         await paginator.send(context.channel, pages, type=NavigationType.Buttons)
 
+    @app_commands.command()
+    @app_commands.describe(fruits='fruits to choose from')
+    @app_commands.choices(fruits=[
+        app_commands.Choice(name='apple', value=1),
+        app_commands.Choice(name='banana', value=2),
+        app_commands.Choice(name='cherry', value=3),
+    ])
+    async def fruit(self, interaction: discord.Interaction, fruits: app_commands.Choice[int]):
+        await interaction.response.send_message(f'Your favourite fruit is {fruits.name}.')
+        
 
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):

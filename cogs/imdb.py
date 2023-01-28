@@ -28,22 +28,56 @@ class IMDB(commands.Cog, name="imdb"):
     async def movie(
         self, 
         context: Context,
-        movie_name: str
+        movie_name: str,
+        num_results: int = 3
     ):
         ia = imdb.Cinemagoer()
         paginator = Paginator(self.bot)
         pages = []
 
         movies = ia.search_movie(movie_name)
+        count = 1
+        await context.send(f"Found {movie_name}!")
         for m in movies:
-            print(f"{m}")
-            print(f"https://imdb.com/title/tt{m.getID()}")
-            print(f"{m.get_fullsizeURL()}")
             em = discord.Embed(title=f"{m}", url=f"https://imdb.com/title/tt{m.getID()}", description="")
             em.set_image(url=m.get_fullsizeURL())
             pages.append(Page(embed=em))
+            count = count + 1
+            if count > num_results:
+                break
         await paginator.send(context.channel, pages, type=NavigationType.Buttons)
+
+    @commands.hybrid_command(
+        name="actor",
+        description="Search IMDB for an actor.",
+    )
+    @checks.not_blacklisted()
+    async def actor(
+        self, 
+        context: Context,
+        actor_name: str,
+        num_results: int = 3
+    ):
+        ia = imdb.Cinemagoer()
+        paginator = Paginator(self.bot)
+        pages = []
+
+        actors = ia.search_person(actor_name)
+        count = 1
+        await context.send(f"Found {actor_name}!")
+        for a in actors:
+            em = discord.Embed(title=f"{a}", url=f"https://imdb.com/name/nm{a.getID()}", description="")
+            em.set_image(url=a.get_fullsizeURL())
+            pages.append(Page(embed=em))
+            count = count + 1
+            if count > num_results:
+                break
+        await paginator.send(context.channel, pages, type=NavigationType.Buttons)
+
+        
+
 
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):
     await bot.add_cog(IMDB(bot))
+ 

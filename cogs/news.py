@@ -21,9 +21,8 @@ class News(commands.Cog, name="news"):
 
     @commands.hybrid_command(
         name="news",
-        description="Get the latest headlines.",
+        description="Get the latest headlines using a search query.",
     )
-
     @checks.not_blacklisted()
     async def news(
         self,
@@ -51,6 +50,39 @@ class News(commands.Cog, name="news"):
                     break
         else:
             await ctx.send(f"No headlines found for {search_query}")
+
+        
+    @commands.hybrid_command(
+        name="headlines",
+        description="Get the latest headlines by country.",
+    )
+    @checks.not_blacklisted()
+    async def headlines(
+        self,
+        ctx: Context, 
+        country: str = "us",
+        num_stories: int = 1
+    ):
+        #Initialize NewsApi
+        newsapi = NewsApiClient(api_key=self.bot.config['NEWSAPI_TOKEN'])
+
+        top_headlines = newsapi.get_top_headlines(country=country)
+                                            
+        print(top_headlines)                                      
+        totalResults = top_headlines["totalResults"]
+        count = 1
+        if totalResults > 0:   
+            await ctx.send(f'Total Headlines: {totalResults}')
+            json_headlines = json.loads(json.dumps(top_headlines["articles"]))
+            for h in json_headlines:
+                print(h)
+                await ctx.send(h["url"])
+                count = count + 1
+                if count > num_stories:
+                    break
+        else:
+            await ctx.send(f"No headlines found for {country}")
+
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):
     await bot.add_cog(News(bot))
