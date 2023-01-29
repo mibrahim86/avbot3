@@ -12,7 +12,6 @@ from discord.ext import commands
 from discord.ext.commands import Context
 from datetime import date
 from helpers import checks
-from sportsipy.nba.roster import Roster
 from urllib.parse import quote
 
 
@@ -118,22 +117,6 @@ class NBA(commands.Cog, name="nba"):
                 await ctx.send(f'```{home_team} ({home_score}) -- {away_team} ({away_score}) | Clock: {current_clock} Quarter: {current_quarter}```')
         else:
             await ctx.send('No games today!')
-
-    @nba.command(
-        name = "roster", 
-        description = "Get NBA team rosters"
-    )
-    @checks.not_blacklisted()
-    async def nba_roster(
-        self, 
-        ctx: Context,
-        team_abbreviation: str = 'HOU'
-    ):
-        print("Roster...")
-        team = Roster(team_abbreviation)
-        print(team)
-        for player in team.players:
-            print(player.name)
 
     @nba.command(
         name = "stats", 
