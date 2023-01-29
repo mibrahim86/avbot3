@@ -35,7 +35,7 @@ class Urban(commands.Cog, name="urban"):
         url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
         querystring = {"term": term}
         headers = {
-	        "X-RapidAPI-Key": self.bot.cofig['URBAN_DICTIONARY_TOKEN'],
+	        "X-RapidAPI-Key": self.bot.config['URBAN_DICTIONARY_TOKEN'],
 	        "X-RapidAPI-Host": "mashape-community-urban-dictionary.p.rapidapi.com"
         }
         response = requests.request("GET", url, headers=headers, params=querystring)
