@@ -23,7 +23,7 @@ class Urban(commands.Cog, name="urban"):
 
     @commands.hybrid_command(
         name="urban",
-        description="This is a testing command that does nothing.",
+        description="Search the urban dictionary.",
     )
     # This will only allow non-blacklisted members to execute the command
     @checks.not_blacklisted()

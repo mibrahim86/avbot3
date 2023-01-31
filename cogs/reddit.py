@@ -20,7 +20,7 @@ class Reddit(commands.Cog, name="reddit"):
         self.bot = bot
 
     @checks.not_blacklisted()
-    @app_commands.command()
+    @app_commands.command(name="reddit", description="Return Reddit posts for a subreddit.")
     @app_commands.describe(sort='sort options on reddit')  
     @app_commands.choices(sort=[
         app_commands.Choice(name='top', value="top"),
@@ -41,8 +41,9 @@ class Reddit(commands.Cog, name="reddit"):
             client_secret=self.bot.config['REDDIT_CLIENT_SECRET'],
             user_agent="avbot user agent"
         ) as reddit:
-            sub = await reddit.subreddit(subreddit, fetch=True)
-            if (sub is not None):
+            try:
+                sub = await reddit.subreddit(subreddit, fetch=True)
+                print(sub)  
                 if sort.value in reddit_sorts:
                     all_embeds = []
                     async for submission in getattr(sub, sort.value)(limit=num_posts):
@@ -51,9 +52,10 @@ class Reddit(commands.Cog, name="reddit"):
                     await interaction.response.send_message(embeds=all_embeds)
                 else:
                     await interaction.response.send_message(f"Bad sort option.  Use --> {reddit_sorts}")
-            else:
-                await interaction.response.send_message(f"Can't find the subreddit: {subreddit}")
-
+            except Exception as err:
+                await interaction.response.send_message(f"Can't find the subreddit {subreddit}.")
+                print(f"Unexpected {err=}, {type(err)=}")
+                raise
 
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):

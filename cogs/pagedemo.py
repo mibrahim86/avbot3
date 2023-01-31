@@ -42,7 +42,11 @@ class PageDemo(commands.Cog, name="pagedemo"):
         ]
 
         await paginator.send(context.channel, pages, type=NavigationType.Buttons)
-
+    
+    # This will only allow non-blacklisted members to execute the command
+    @checks.not_blacklisted()
+    # This will only allow owners of the bot to execute the command -> config.json
+    @checks.is_owner()
     @app_commands.command()
     @app_commands.describe(fruits='fruits to choose from')
     @app_commands.choices(fruits=[
@@ -52,7 +56,7 @@ class PageDemo(commands.Cog, name="pagedemo"):
     ])
     async def fruit(self, interaction: discord.Interaction, fruits: app_commands.Choice[int]):
         await interaction.response.send_message(f'Your favourite fruit is {fruits.name}.')
-        
+
 
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):

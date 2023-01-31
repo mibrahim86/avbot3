@@ -23,7 +23,7 @@ class Weather(commands.Cog, name="weather"):
 
     @commands.hybrid_command(
         name="weather",
-        description="This is a testing command that does nothing.",
+        description="Check the weather in a city.",
     )
     @checks.not_blacklisted()
     async def weather(self, context: Context, city: str = 'Philadelphia'):

@@ -33,7 +33,7 @@ class Scores(commands.Cog, name="scores"):
     # Here you can just add your own commands, you'll always need to provide "self" as first parameter.
     @commands.hybrid_command(
         name="scores",
-        description="Get sports betting information.",
+        description="Get sports scores.",
     )
     @checks.not_blacklisted()
     async def scores(self, context: Context, league: str = "nfl", days_from: int = 1):
@@ -70,7 +70,7 @@ class Scores(commands.Cog, name="scores"):
                                     home_score = s['score']
                                 elif s['name'] == away_team:
                                     away_score = s['score']
-                            em = discord.Embed(title=f"{league} odds", description=f"Home Team: {home_team} ({home_score})\nAway Team {away_team} ({away_score})")
+                            em = discord.Embed(title=f"{league} scores", description=f"Home Team: {home_team} ({home_score})\nAway Team {away_team} ({away_score})")
                             em.set_footer(text=f"Start time: {commence_time}")
                             pages.append(Page(embed=em))
                     if pages:
