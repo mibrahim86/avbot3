@@ -46,7 +46,7 @@ class Tumblr(commands.Cog, name="tumblr"):
             #print(json.dumps(blog_info, indent=4))
             total_posts = blog_info['blog']['total_posts']
             if total_posts > 0:
-                await ctx.send(f"Found blog: {tumblr_blog}")
+                #await ctx.send(f"Found blog: {tumblr_blog}")
                 posts_json = tum.posts(tumblr_blog, limit=num_stories, offset=random.randint(1,total_posts), type="photo")
                 #print(json.dumps(posts_json['posts'], indent=4))
                 for post in posts_json['posts']:
