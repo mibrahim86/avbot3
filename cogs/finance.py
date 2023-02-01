@@ -35,22 +35,22 @@ class Finance(commands.Cog, name="finance"):
         s = yfinance.Ticker(ticker)
         print(s)
         if s is not None:
-            #print(json.dumps(s.info, indent=4))
+            print(s.info)
             if s.info['quoteType'] == "EQUITY":
-                price = "${:,.2f}".format(s.info["regularMarketPrice"])
-                marketcap = "${:,.0f}".format(s.info["marketCap"])
+                ask = "${:,.2f}".format(s.info["ask"])
+                bid = "${:,.2f}".format(s.info["bid"])
                 summary = s.info["longBusinessSummary"]
-                embed=discord.Embed(title=f"{stock}", url=f"https://cnbc.com/quotes/{stock}",description=f"{summary}")
-                embed.add_field(name=f"Stock Price", value=f"{price}", inline=True)
-                embed.add_field(name=f"Market Capitalization", value=f"{marketcap}", inline=True)
-                await ctx.respond(embed=embed)
+                embed=discord.Embed(title=f"{ticker}", url=f"https://cnbc.com/quotes/{ticker}",description=f"{summary}")
+                embed.add_field(name=f"ASK", value=f"{ask}", inline=True)
+                embed.add_field(name=f"BID", value=f"{bid}", inline=True)
+                await ctx.send(embed=embed)
             elif s.info['quoteType'] == "ETF":
-                price = "${:,.2f}".format(s.info["regularMarketPrice"])
-                totalassets = "${:,.0f}".format(s.info["totalAssets"])
+                ask = "${:,.2f}".format(s.info["ask"])
+                bid = "${:,.2f}".format(s.info["bid"])
                 summary = s.info['longBusinessSummary']
-                embed=discord.Embed(title=f"{stock}", url=f"https://cnbc.com/quotes/{stock}",description=f"{summary}")
-                embed.add_field(name=f"ETF Price", value=f"{price}", inline=True)
-                embed.add_field(name=f"Total Assets", value=f"{totalassets}", inline=True)
+                embed=discord.Embed(title=f"{ticker}", url=f"https://cnbc.com/quotes/{ticker}",description=f"{summary}")
+                embed.add_field(name=f"ASK", value=f"{ask}", inline=True)
+                embed.add_field(name=f"BID", value=f"{bid}", inline=True)
                 await ctx.send(embed=embed)
             else:
                 await ctx.send(f"No information for {ticker}!")

@@ -5,12 +5,14 @@ Description:
 
 Version: 5.5.0
 """
+import praw
 import asyncpraw
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 from discord import app_commands
 from helpers import checks
+from paginator import Paginator, Page, NavigationType
 
 reddit_sorts = ["top", "hot", "rising", "controversial", "new"]
 
@@ -18,22 +20,17 @@ reddit_sorts = ["top", "hot", "rising", "controversial", "new"]
 class Reddit(commands.Cog, name="reddit"):
     def __init__(self, bot):
         self.bot = bot
-
+    
+    @commands.hybrid_command(
+        name="redditasync",
+        description="Search Reddit Async",
+    )
     @checks.not_blacklisted()
-    @app_commands.command(name="reddit", description="Return Reddit posts for a subreddit.")
-    @app_commands.describe(sort='sort options on reddit')  
-    @app_commands.choices(sort=[
-        app_commands.Choice(name='top', value="top"),
-        app_commands.Choice(name='hot', value="hot"),
-        app_commands.Choice(name='controversial', value="controversial"),
-        app_commands.Choice(name='rising', value="rising"),
-        app_commands.Choice(name='new', value="new")
-    ])
-    async def reddit(
+    async def redditasync(
         self,
-        interaction: discord.Interaction,
+        ctx: Context,
         subreddit: str,
-        sort: app_commands.Choice[str],
+        sort: str,
         num_posts: int = 1
     ):
         async with asyncpraw.Reddit(
@@ -44,18 +41,70 @@ class Reddit(commands.Cog, name="reddit"):
             try:
                 sub = await reddit.subreddit(subreddit, fetch=True)
                 print(sub)  
-                if sort.value in reddit_sorts:
+                if sort in reddit_sorts:
                     all_embeds = []
-                    async for submission in getattr(sub, sort.value)(limit=num_posts):
+                    async for submission in getattr(sub, sort)(limit=num_posts):
                         em = discord.Embed(title=submission.title, url=f'https://reddit.com/{submission.permalink}', description=submission.author)
                         all_embeds.append(em)
-                    await interaction.response.send_message(embeds=all_embeds)
+                    await ctx.send(embeds=all_embeds)
                 else:
-                    await interaction.response.send_message(f"Bad sort option.  Use --> {reddit_sorts}")
+                    await ctx.send(f"Bad sort option.  Use --> {reddit_sorts}")
             except Exception as err:
-                await interaction.response.send_message(f"Can't find the subreddit {subreddit}.")
+                await ctx.send(f"Can't find the subreddit {subreddit}.")
                 print(f"Unexpected {err=}, {type(err)=}")
                 raise
+
+    @commands.hybrid_command(
+        name="reddit",
+        description="Search Reddit",
+    )
+    @checks.not_blacklisted()
+    async def reddit(
+        self,
+        ctx: Context,
+        subreddit: str,
+        sort: str,
+        num_posts: int = 1
+    ):
+        paginator = Paginator(self.bot)
+        pages = []
+        
+        reddit = praw.Reddit(
+            client_id=self.bot.config['REDDIT_CLIENT_ID'],
+            client_secret=self.bot.config['REDDIT_CLIENT_SECRET'],
+            user_agent="avbot user agent"
+        )
+
+        try:
+            all_embeds = []
+            
+            if sort == "top":
+                submissions = reddit.subreddit(subreddit).top(limit=num_posts)
+            elif sort == "hot":
+                submissions = reddit.subreddit(subreddit).hot(limit=num_posts)
+            elif sort == "rising":
+                submissions = reddit.subreddit(subreddit).rising(limit=num_posts)
+            elif sort == "controversial":
+                submissions = reddit.subreddit(subreddit).controversial(limit=num_posts)
+            elif sort == "new":
+                submissions = reddit.subreddit(subreddit).new(limit=num_posts)
+            else:
+                submissions = []    
+
+            if submissions != []:
+                await ctx.send(f"Found the {subreddit} subreddit")
+                for submission in submissions:
+                    print(submission.title)
+                    em = discord.Embed(title=submission.title, url=f'https://reddit.com/{submission.permalink}', description=submission.author)
+                    all_embeds.append(em)
+                    pages.append(Page(embed=em))
+                await paginator.send(ctx.channel, pages, type=NavigationType.Buttons)
+            else:
+                await ctx.send(f"Bad Sort. Use {reddit_sorts}")
+        except Exception as err:
+            await ctx.send(f"Can't find the subreddit {subreddit}.")
+            print(f"Unexpected {err=}, {type(err)=}")
+            raise
 
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):
