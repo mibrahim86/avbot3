@@ -44,7 +44,7 @@ jobs:
         - run:
             name: Deploy Over SSH
             command: |
-              ssh -v root@143.198.178.203 "update-avbot.sh"
+              ssh root@143.198.178.203 "update-avbot.sh"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
