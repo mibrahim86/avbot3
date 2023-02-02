@@ -46,6 +46,7 @@ class Spotify(commands.Cog, name="spotify"):
             artist_name = items[0]['name']
             print(artist_name+"="+artist_uri)
         if artist_uri != "":
+            await ctx.send(f"{artist_name} found!")
             top_tracks = sp.artist_top_tracks(artist_uri)
             for track in top_tracks['tracks'][:limit_arg]:
                 track_name = track['name']
