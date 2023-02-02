@@ -35,22 +35,26 @@ class Urban(commands.Cog, name="urban"):
         url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
         querystring = {"term": term}
         headers = {
-	        "X-RapidAPI-Key": self.bot.config['URBAN_DICTIONARY_TOKEN'],
+	        "X-RapidAPI-Key": self.bot.config['RAPIDAPI_TOKEN'],
 	        "X-RapidAPI-Host": "mashape-community-urban-dictionary.p.rapidapi.com"
         }
         response = requests.request("GET", url, headers=headers, params=querystring)
         definitions = json.loads(response.text)
 
         print(json.dumps(definitions['list']))
-        for definition in definitions['list']:
-            print(definition['definition'])
-            print(definition['permalink'])
-            print(definition['example'])
-            em = discord.Embed(title=term, description=definition['definition'])
-            em.add_field(name="Example", value=definition['example'])
-            em.set_footer(text=f"Upvotes({definition['thumbs_up']}) |  Downvotes({definition['thumbs_down']})")
-            pages.append(Page(embed=em))
-        await paginator.send(context.channel, pages, type=NavigationType.Buttons)
+        if definitions['list']:
+            await context.send(f"Found definitions for {term}")
+            for definition in definitions['list']:
+                print(definition['definition'])
+                print(definition['permalink'])
+                print(definition['example'])
+                em = discord.Embed(title=term, description=definition['definition'])
+                em.add_field(name="Example", value=definition['example'])
+                em.set_footer(text=f"Upvotes({definition['thumbs_up']}) |  Downvotes({definition['thumbs_down']})")
+                pages.append(Page(embed=em))
+            await paginator.send(context.channel, pages, type=NavigationType.Buttons)
+        else:
+            await context.send(f"No definitions for {term}")
              
 
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
