@@ -41,10 +41,10 @@ jobs:
     machine:
         enabled: true
     steps:
-      - run:
-        name: Deploy Over SSH
-        command: |
-          ssh root@143.198.178.203 "/root/update-avbot3.sh"
+        - run:
+          name: Deploy Over SSH
+          command: |
+            ssh root@143.198.178.203 "/root/update-avbot3.sh"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
