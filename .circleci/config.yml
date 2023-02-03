@@ -16,8 +16,8 @@ jobs:
     #      command: pytest
 
   deploy:
-    docker:
-      - image: cimg/python:3.9.16
+    machine:
+        enabled: true
     steps:
         - run:
             name: Deploy Over SSH
@@ -31,3 +31,7 @@ workflows:
         - deploy:
             requires:
                 - build-and-test
+
+
+
+`
