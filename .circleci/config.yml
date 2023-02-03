@@ -11,9 +11,9 @@ jobs:
       - checkout
       - python/install-packages:
           pkg-manager: pip
-    #  - run:
-    #      name: Run tests
-    #      command: pytest
+      - run:
+          name: Run tests
+          command: pytest
 
   deploy:
     machine:
