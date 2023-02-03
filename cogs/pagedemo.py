@@ -58,6 +58,12 @@ class PageDemo(commands.Cog, name="pagedemo"):
         await interaction.response.send_message(f'Your favourite fruit is {fruits.name}.')
 
 
+    @commands.command()
+    async def listcommands(self,ctx):
+        commands = [c.name for c in self.bot.commands]
+        print(commands)
+
+
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):
     await bot.add_cog(PageDemo(bot))

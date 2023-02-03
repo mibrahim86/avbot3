@@ -26,7 +26,7 @@ class Spoon(commands.Cog, name="spoon"):
         description="This is a testing command that does nothing.",
     )
     @checks.not_blacklisted()
-    async def recipe(self, context: Context, recipe_query: str, total_results: int = 3):
+    async def recipe(self, context: Context, recipe_query: str, total_results: int = 1):
         search_url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch"
         id_query_string = {"query": recipe_query, "number": total_results}
 

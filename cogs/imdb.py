@@ -21,11 +21,11 @@ class IMDB(commands.Cog, name="imdb"):
     # Here you can just add your own commands, you'll always need to provide "self" as first parameter.
 
     @commands.hybrid_command(
-        name="movie",
+        name="imdb",
         description="Search IMDB for a movie.",
     )
     @checks.not_blacklisted()
-    async def movie(
+    async def imdb(
         self, 
         context: Context,
         movie_name: str,
