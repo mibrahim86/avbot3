@@ -13,11 +13,10 @@ jobs:
           pkg-manager: pip
     #  - run:
     #      name: Run tests
-    #      # This assumes pytest is installed via the install-package step above
     #      command: pytest
+
   deploy:
-    machine:
-        enabled: true
+    executor: machine
     steps:
         - run:
             name: Deploy Over SSH
@@ -27,7 +26,7 @@ jobs:
 workflows:
   main:
     jobs:
-        - build-and-test:
+        - build-and-test
+        - deploy:
             requires:
-              - build-and-test
-        - deploy
+                - build-and-test
