@@ -16,7 +16,8 @@ jobs:
     #      command: pytest
 
   deploy:
-    executor: machine
+    docker:
+      - image: cimg/python:3.9.16
     steps:
         - run:
             name: Deploy Over SSH
